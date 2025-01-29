@@ -7,52 +7,54 @@ class Constants(object):
     """These are the durations in ms as reported in the manuscript.
     """
 
-    block_trials = 32
-    total_trials = 480
+    ## librayr ptb
+    ## audio latency priority = 4
 
-    valid_keys = ['f', 'j']
+    block_trials = 30
+    total_trials = 8*30
 
-    dur_display_no_value = 0.5 ## highlight choice (500ms)
-    dur_display_value = 1.0 ## display value (1000ms)
-    inter_trial_interval = 0.5 
+    dur_stimulus = 0.2 ## highlight choice (500ms)
+    dur_resp = 1.8 ## display value (1000ms)
+    inter_trial_interval_min = 0.5 
+    inter_trial_interval_jitter = 0.5 
 
     # size of stimuli in degrees of visual angle
     instruction_text_size = 1
-    value_text_size = 1
-    value_font = 'monospace'
-    card_size = 4.0
-    card_offset = 5.0
-    card_border_thickness = 20 # pixels
     fix_size = 0.2
-    ## red, green, blue, purple
-    colors_rgb1 = [
-        (0.486, 0.086, 0.051),
-        (0.169, 0.373, 0.11),
-        (0.0, 0.0, 0.482),
-        (0.42, 0.071, 0.443),
-    ]
-    colors = [
-        (124, 22, 13),
-        (43, 95, 28),
-        (0, 0, 123),
-        (107, 18, 113 ),
-    ]
 
-    instruction_msg = """Welcome to the YeungSanfey2004 experiment
-    
-    In every trial you will see two colored cards displayed. 
-    The cards are selected from four decks; blue, green, purple and red. 
-    Your task is to select one of the two cards, 
-    by pressing F for the left card, and J for the right card.
-    After selecting a card, you will see how much you won or lost, 
-    and how much you would have won or lost if you had chosen the other card. 
-    Use any strategy you want to help you maximize your points total.
-
-    There will be 15 blocks of 32 trials each. 
-    At the end of each block you will see an update of your winnings up to that point.
-    You will keep whatever money you won playing the game, in addition to your course credits.
+    """ conditions.csv
+    stimulus,condition,direction,correct_resp,event_marker,event_hex
+    stimuli/All_left.jpg,compatible,left,0,101::CL,3D
+    stimuli/All_Right.jpg,compatible,right,1,102::CR,3E
+    stimuli/Center_Left.jpg,incompatible,left,0,103::IL,3F
+    stimuli/Center_Right.jpg,incompatible,right,1,104::IR,40
     """
-    ready_msg = 'Ready? \n\n Press [space] to start'
-    block_msg = 'Your total winnings are £{:.02f}.\n\nTake a break.\n\nPress [space] to start the next block'
+
+    """ blocks xlsx
+    blockOrder	block1_nReps	block2_nReps	block3_nReps
+    A	1	0	0
+    B	0	1	0
+    C	0	0	1
+    """
+    """
+    'Ready for the real thing?\n\n\n\n\nClick anywhere to proceed...'
+    'Click to continue...'
+    'Fin.'
+    'This is just a test.\n\n\n\n\nClick anywhere to proceed...'
+    'stimuli/startle2_reencoded.wav'
+    """
+
+    ready_msg = 'This is just a test.\n\nClick anywhere to proceed...'
     thank_msg = 'Done! Thank you.'
 
+    '''
+    If performance was 75% correct or lower, the message
+    ‘‘Please try to be more accurate’’ was displayed; performance
+    above 90% correct was followed by ‘‘Please try to respond
+    faster’’; if performance was between these levels, the message
+    ‘‘You’re doing a great job’’ was displayed.
+    '''
+
+    low_acc_msg = "Please try to be more accurate"
+    high_acc_msg = "Please try to respond faster"
+    mid_acc_msg = "You’re doing a great job"

@@ -6,6 +6,7 @@ from os.path import expanduser, join
 from datetime import datetime
 from os import makedirs
 from math import isclose
+from statistics import mean
 import platform
 from pandas import DataFrame
 from experiment.constants import Constants
@@ -64,7 +65,7 @@ engine.connectTriggerInterface(config['triggers'])
 engine.loadStimuli()
 
 # Welcome the participant
-engine.showMessage(const.instruction_msg)
+#engine.showMessage(const.instruction_msg)
 
 timer = Timer()
 timer.optimizeFlips(fr_conf, const)
@@ -81,18 +82,25 @@ engine.showMessage(const.ready_msg)
 trials = generate_trials()
 
 
-total = 0.0
-t = 0
+block_trials_correct = []
 for t, trial in enumerate(trials):
 
     trial.run(engine, timer, triggers)
-    total += trial.result or 0
+    block_trials_correct.append(trial.correct)
     if engine.exitRequested():
         break ## exit trial loop
 
     if t % const.block_trials == 0:
         # end of block
-        engine.showMessage(const.block_msg.format(total/100), confirm=True)
+        accuracy = mean(block_trials_correct)
+        if accuracy <= 0.75 :
+            msg = const.low_acc_msg
+        elif accuracy > 0.90 :
+            msg = const.high_acc_msg
+        else :
+            msg = const.mid_acc_msg
+        engine.showMessage(msg, confirm=True)
+        block_trials_correct = [] ## reset list of trial outcomes
 
 ## Create table from trials and save to csv file
 df = DataFrame([asdict(t) for t in trials])
@@ -101,5 +109,3 @@ df.to_csv(trials_fpath, float_format='%.4f')
 if not engine.exitRequested():
     engine.showMessage(const.thank_msg, confirm=False)
 engine.stop()
-
-

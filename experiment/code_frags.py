@@ -2,61 +2,6 @@
 """
 
 
-##### code_performance
-
-'''
-If performance was 75% correct or lower, the message
-‘‘Please try to be more accurate’’ was displayed; performance
-above 90% correct was followed by ‘‘Please try to respond
-faster’’; if performance was between these levels, the message
-‘‘You’re doing a great job’’ was displayed.
-'''
-if runningAccuracy <= 75 :
-    message = "Please try to be more accurate"
-elif runningAccuracy > 90 :
-    message = "Please try to respond faster"
-else :
-    message = "You’re doing a great job"
-
-
-#### code_blockCheck
-
-## begin routine
-block1_nReps = blockOrders[expInfo['blockOrder']]['block1'][blocks.thisRepN+1]
-block2_nReps = blockOrders[expInfo['blockOrder']]['block2'][blocks.thisRepN+1]
-block3_nReps = blockOrders[expInfo['blockOrder']]['block3'][blocks.thisRepN+1]
-
-## begin exp
-
-blockOrder = expInfo['blockOrder']
-
-blockOrder_A = {'block1':{1:True,2:False,3:False},
-                'block2':{1:False,2:True,3:False},
-                    'block3':{1:False,2:False,3:True}}
-
-blockOrder_B = {'block1':{1:True,2:False,3:False},
-                'block2':{1:False,2:False,3:True},
-                    'block3':{1:False,2:True,3:False}}
-
-blockOrder_C = {'block1':{1:False,2:True,3:False},
-                'block2':{1:2,2:False,3:False},
-                    'block3':{1:False,2:False,3:True}}
-
-blockOrder_D = {'block1':{1:False,2:False,3:True},
-                'block2':{1:True,2:False,3:False},
-                    'block3':{1:False,2:True,3:False}}
-
-blockOrder_E = {'block1':{1:False,2:True,3:False},
-                'block2':{1:False,2:False,3:True},
-                    'block3':{1:True,2:False,3:False}}
-
-blockOrder_F = {'block1':{1:False,2:False,3:True},
-                'block2':{1:False,2:True,3:True},
-                    'block3':{1:True,2:False,3:False}}     
-
-blockOrders = {'A':blockOrder_A,'B':blockOrder_B,'C':blockOrder_C,
-                'D':blockOrder_D,'E':blockOrder_E,'F':blockOrder_F}
-
 
 ### code_trial (being exp)
 showBreakMessage = False
@@ -171,3 +116,41 @@ if expInfo['EEG connected?'] == 'y' :
 
 if expInfo['EEG connected?'] == 'y' :
     outlet.push_sample([str(127)])  # stop eego recording
+
+
+
+## begin routine
+block1_nReps = blockOrders[expInfo['blockOrder']]['block1'][blocks.thisRepN+1]
+block2_nReps = blockOrders[expInfo['blockOrder']]['block2'][blocks.thisRepN+1]
+block3_nReps = blockOrders[expInfo['blockOrder']]['block3'][blocks.thisRepN+1]
+
+## begin exp
+
+blockOrder = expInfo['blockOrder']
+
+blockOrder_A = {'block1':{1:True,2:False,3:False},
+                'block2':{1:False,2:True,3:False},
+                    'block3':{1:False,2:False,3:True}}
+
+blockOrder_B = {'block1':{1:True,2:False,3:False},
+                'block2':{1:False,2:False,3:True},
+                    'block3':{1:False,2:True,3:False}}
+
+blockOrder_C = {'block1':{1:False,2:True,3:False},
+                'block2':{1:2,2:False,3:False},
+                    'block3':{1:False,2:False,3:True}}
+
+blockOrder_D = {'block1':{1:False,2:False,3:True},
+                'block2':{1:True,2:False,3:False},
+                    'block3':{1:False,2:True,3:False}}
+
+blockOrder_E = {'block1':{1:False,2:True,3:False},
+                'block2':{1:False,2:False,3:True},
+                    'block3':{1:True,2:False,3:False}}
+
+blockOrder_F = {'block1':{1:False,2:False,3:True},
+                'block2':{1:False,2:True,3:True},
+                    'block3':{1:True,2:False,3:False}}     
+
+blockOrders = {'A':blockOrder_A,'B':blockOrder_B,'C':blockOrder_C,
+                'D':blockOrder_D,'E':blockOrder_E,'F':blockOrder_F}
