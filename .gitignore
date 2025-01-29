@@ -4,7 +4,7 @@ admin/
 __MACOSX
 .DS_Store
 *.asv
-experiment/PsychopyBuilder/data/
+experiment_pilots/PsychopyBuilder/data/
 
 
 # Byte-compiled / optimized / DLL files
