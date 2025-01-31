@@ -37,6 +37,17 @@ class LabJackPort:
         self.inner.setData(val, address='FIO')
 
 
+class EegoLSLPort:
+
+    def __init__(self):
+        from pylsl import StreamInfo, StreamOutlet
+        stream = StreamInfo('psychopy2eego','Markers',1,0,'string', 'EML')
+        self.inner = StreamOutlet(stream)
+
+    def trigger(self, val: int) -> None:
+        self.inner.push_sample(str(val))
+
+
 class ViewPixxTriggerPort:
 
     def __init__(self, win: PsychopyEngine, scale: float, viewPixBulbSize: float):
@@ -60,7 +71,7 @@ class ViewPixxTriggerPort:
 
 
 TriggerInterface = Union[SerialTriggerPort, FakeTriggerPort,
-    ViewPixxTriggerPort, LabJackPort, ParallelPort]
+    ViewPixxTriggerPort, LabJackPort, ParallelPort, EegoLSLPort]
 
 def createTriggerPort(typ: str, engine: PsychopyEngine, scale: float, address: str='', rate: int=0, viewPixBulbSize: float=7.0) -> TriggerInterface:
     if typ == 'dummy':
@@ -73,5 +84,7 @@ def createTriggerPort(typ: str, engine: PsychopyEngine, scale: float, address: s
         return LabJackPort()
     elif typ == 'parallel':
         return ParallelPort(address)
+    elif typ == 'eegolsl':
+        return EegoLSLPort(address)
     else:
         raise ValueError('Unknown port type in lab settings.')

@@ -69,6 +69,8 @@ engine.loadStimuli()
 
 triggers = Triggers()
 
+engine.signalStartRecording() ## for eego setup
+
 ## before experiment
 engine.showMessage(const.ready_msg)
 

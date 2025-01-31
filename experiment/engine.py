@@ -9,16 +9,22 @@ https://psychopy.org/general/timing/detectingFrameDrops.html#warn-me-if-i-drop-a
 from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple, Dict, List, Union, Any, Optional, Literal
 import json
+from experiment.triggers import Triggers
 from psychopy.monitors import Monitor
 from psychopy.core import wait
 from psychopy import logging
 from psychopy.hardware.keyboard import Keyboard
-from psychopy.visual import Window, TextStim
+from psychopy.visual import Window, TextStim, ImageStim
 from psychopy.visual.line import Line
 from psychopy.visual.rect import Rect
 from psychopy.visual.shape import ShapeStim
+from psychopy.sound import Sound
 from psychopy.info import RunTimeInfo
 from psychopy.event import waitKeys, getKeys
+from psychopy import plugins
+plugins.activatePlugins()
+prefs.hardware['audioLib'] = 'ptb'
+prefs.hardware['audioLatencyMode'] = '4'
 import numpy
 from experiment.ports import TriggerInterface, FakeTriggerPort, createTriggerPort
 if TYPE_CHECKING:
@@ -43,13 +49,14 @@ class PsychopyEngine(object):
     ## stimuli
     cards: List[Rect]
     fixCross: ShapeStim
-    params: Constants
+    const: Constants
 
-    def __init__(self, params: Constants) -> None:
+    def __init__(self, const: Constants, triggers: Triggers) -> None:
         self.port = FakeTriggerPort()
         self._exitNow = False
         self.kb = Keyboard()
-        self.params = params
+        self.const = const
+        self.triggers = triggers
 
     def configureLog(self, fpath: str):
         logging.console.setLevel(logging.WARN)
@@ -89,45 +96,63 @@ class PsychopyEngine(object):
         return RunTimeInfo(win=self.win)
 
     def loadStimuli(self):
-        """
-        card left
-        card right
-        value left
-        value right
-        fixation
-        """
-        startle = sound.Sound(
-            value='stimuli/startle2_reencoded.wav',
+        self.startle = Sound(
+            value='stimuli/startle.wav',
             volume=1.0,
             hamming=False,
             name='startle',
             autoLog=False
         )
 
-        self.card_right = Rect(
+        self.all_left = ImageStim(
                 win=self.win,
-                size=(self.params.card_size, self.params.card_size),
+                image='stimuli/All_Left.jpg',
+                size=(5, 5),
                 units='deg',
                 pos=(+5, 0),
-                lineColor='white',
-                fillColor='white',
                 lineWidth=0,
-                name=f'card_left',
-                colorSpace='rgb255'
+                name='all_left',
+        )
+        self.all_right = ImageStim(
+                win=self.win,
+                image='stimuli/All_Right.jpg',
+                size=(5, 5),
+                units='deg',
+                pos=(+5, 0),
+                lineWidth=0,
+                name='all_right',
+        )
+        self.center_left = ImageStim(
+                win=self.win,
+                image='stimuli/Center_Left.jpg',
+                size=(5, 5),
+                units='deg',
+                pos=(+5, 0),
+                lineWidth=0,
+                name=f'center_left',
+        )
+        self.center_right = ImageStim(
+                win=self.win,
+                image='stimuli/Center_Right.jpg',
+                size=(5, 5),
+                units='deg',
+                pos=(+5, 0),
+                lineWidth=0,
+                name=f'center_right',
         )
 
         self.fixCross = ShapeStim(
             self.win,
             pos=(0.0, 0.0),
             vertices=(
-                (0,-self.params.fix_size),
-                (0,self.params.fix_size),
+                (0,-self.const.fix_size),
+                (0,self.const.fix_size),
                 (0,0),
-                (-self.params.fix_size,0),
-                (self.params.fix_size,0)
+                (-self.const.fix_size,0),
+                (self.const.fix_size,0)
             ),
             units = 'deg',
-            lineWidth = self.params.fix_size*10,
+            lineWidth = self.const.fix_size*10,
             closeShape = False,
             lineColor='white',
             name='fixCross'
@@ -145,7 +170,7 @@ class PsychopyEngine(object):
         msg = TextStim(
             self.win,
             text=message,
-            height=self.params.instruction_text_size,
+            height=self.const.instruction_text_size,
             units='deg',
             wrapWidth=100,
             name='message'
@@ -175,57 +200,46 @@ class PsychopyEngine(object):
                 stim_dur: int,
                 resp_dur: int,
             ) -> Tuple[Optional[bool], Optional[float]]:
-        pass
-        # self.fixCross.draw()
-        # self.card_left.fillColor = self.params.colors[card1]
-        # self.card_left.lineWidth = 10 if highlight == 'left' else 0
-        # self.card_left.draw()
-        # self.card_right.fillColor = self.params.colors[card2]
-        # self.card_right.lineWidth = 10 if highlight == 'right' else 0
-        # self.card_right.draw()
-        # if showValue == 'left':
-        #     self.value_left.text = f'{value:+d}'
-        #     self.value_left.draw()
-        # if showValue == 'right':
-        #     self.value_right.text = f'{value:+d}'
-        #     self.value_right.draw()
-        # triggerNr = triggerNr
-        # self.win.logOnFlip(level=logging.DATA, msg=f'flip {triggerNr}')
+        if direction == 'left' and compatibility == 'compatible':
+            img = self.all_left
+        if direction == 'right' and compatibility == 'compatible':
+            img = self.all_right
+        if direction == 'left' and compatibility == 'incompatible':
+            img = self.center_left
+        if direction == 'right' and compatibility == 'incompatible':
+            img = self.center_right
+        
+        img.draw()
+        triggerNr = self.triggers.forFlanker(phase, compatibility, direction)
+        self.win.logOnFlip(level=logging.DATA, msg=f'flip {triggerNr}')
         # record = dict()
         # self.win.timeOnFlip(record, 'flipTime')
         # self.kb.clearEvents()
-        # def flipHandler():
-        #     self.kb.clock.reset()
-        #     self.port.trigger(triggerNr)
+        def flipHandler():
+            self.port.trigger(triggerNr)
 
-        # self.win.callOnFlip(flipHandler)
-        # self.win.flip()
+        self.win.callOnFlip(flipHandler)
+        self.win.flip()
         # for _ in range(duration-1):
 
         #     if choose:
-        #         keys = self.kb.getKeys(self.params.valid_keys, waitRelease=False)
+        #         keys = self.kb.getKeys(self.const.valid_keys, waitRelease=False)
         #         if keys:
         #             key = keys[0]
-        #             sideChosen = ['left', 'right'][self.params.valid_keys.index(key.name)]
+        #             sideChosen = ['left', 'right'][self.const.valid_keys.index(key.name)]
         #             return (sideChosen, key.rt)
 
-        #     self.fixCross.draw()
-        #     self.card_left.draw()
-        #     self.card_right.draw()
-        #     if showValue == 'left':
-        #         self.value_left.draw()
-        #     if showValue == 'right':
-        #         self.value_right.draw()
         #     self.win.flip()
 
     def displayFixCross(self, duration: int):
-        for _ in range(duration):
-            self.fixCross.draw()
-            self.win.flip()
+        #for _ in range(duration):
+        self.fixCross.draw()
+        self.win.flip()
+        wait(duration/1000)
 
     def delayAndStartle(self, reason: StartleCondition, delay: int):
-        pass
-        startle.play()
+        wait(delay/1000)
+        self.startle.play()
         #nextFlip = win.getFutureFlipTime(clock='ptb')
         #startle.play(when=nextFlip)  # sync with screen refresh
 
@@ -239,7 +253,11 @@ class PsychopyEngine(object):
             return True
         return False
     
+    def signalStartRecording(self) -> None:
+        self.port.trigger(self.const.eego_start_trigger)
+    
     def stop(self) -> None:
+        self.port.trigger(self.const.eego_stop_trigger)
         self.win.close()
 
 

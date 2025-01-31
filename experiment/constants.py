@@ -23,6 +23,9 @@ class Constants(object):
     instruction_text_size = 1
     fix_size = 0.2
 
+    eego_start_trigger = 123  # start eego recording
+    eego_stop_trigger= 127  # stop eego recording
+
     """ conditions.csv
     stimulus,condition,direction,correct_resp,event_marker,event_hex
     stimuli/All_left.jpg,compatible,left,0,101::CL,3D
