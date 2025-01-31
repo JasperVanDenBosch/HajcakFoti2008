@@ -176,7 +176,12 @@ class PsychopyEngine(object):
         msg.draw()
         self.win.flip()
         if confirm:
-            waitKeys(keyList='space')
+            self.mouse.clickReset()
+            while True:
+                wait(0.5)
+                buttons, _ = self.mouse.getPressed(getTime=True)
+                if sum(buttons):
+                    return
         else:
             wait(1.5)
 
@@ -212,24 +217,32 @@ class PsychopyEngine(object):
 
         def flipHandler():
             self.port.trigger(triggerNr)
-            self.mouse.clickReset(buttons=(0, 1, 2)) #buttons=(0, 1, 2)
+            self.mouse.clickReset() #buttons=(0, 1, 2)
 
         self.win.callOnFlip(flipHandler)
         self.win.flip()
         wait(stim_dur/1000)
         self.win.flip()
 
-        n_iter = int(resp_dur / 50)
+        n_iter = int(resp_dur / 10)
         for _ in range(n_iter):
             buttons, times = self.mouse.getPressed(getTime=True)
-            if len(buttons):
+            if sum(buttons):
                 if direction == 'left':
-                    correct = buttons[-1] == 0
+                    rt = times[0]
+                    correct = buttons == [1, 0, 0]
                 else:
-                    correct = buttons[-1] != 0
-                #return correct, times[-1]
-        return None, 0.0
-
+                    rt = times[-1]
+                    correct = buttons == [0, 0, 1]
+                break
+            wait(10/1000)
+            ## todo check at end instead
+        else:
+            rt = 0.0
+            correct = None
+        triggerNr = self.triggers.forResponse(phase, correct)
+        self.port.trigger(triggerNr)
+        return correct, rt
 
     def displayFixCross(self, duration: int):
         self.fixCross.draw()
@@ -245,10 +258,10 @@ class PsychopyEngine(object):
     def exitRequested(self) -> bool:
         if self._exitNow:
             return True
-        new_keys = getKeys(keyList=['q', 'delete'])
-        if 'q' in new_keys and 'delete' in new_keys:
+        new_keys = getKeys(keyList=['q', 'esc'])
+        if 'q' in new_keys and 'esc' in new_keys:
             self._exitNow = True
-            logging.warn('EXIT REQUESTED (Q and DEL pressed)')
+            logging.warn('EXIT REQUESTED (Q and ESC pressed)')
             return True
         return False
     

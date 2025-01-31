@@ -10,7 +10,7 @@ class Constants(object):
     ## librayr ptb
     ## audio latency priority = 4
 
-    block_trials = 30
+    block_trials = 10 #30
     total_trials = 1*30 #8*30
 
     dur_stimulus = 200 ## 
@@ -27,7 +27,8 @@ class Constants(object):
     eego_start_trigger = 123  # start eego recording
     eego_stop_trigger= 127  # stop eego recording
 
-    ready_msg = 'This is just a test.\n\nClick anywhere to proceed...'
+    ready_msg = 'Training starts.\n\nClick anywhere to proceed...'
+    exp_msg = 'Training done.\n\nClick anywhere when ready to start mean experiment...'
     thank_msg = 'Done! Thank you.'
     low_acc_msg = "Please try to be more accurate"
     high_acc_msg = "Please try to respond faster"

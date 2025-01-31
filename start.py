@@ -83,6 +83,9 @@ for trial in train_trials:
     if engine.exitRequested():
         break ## exit trial loop
 
+#raise ValueError
+engine.showMessage(const.exp_msg)
+
 ## main experiment
 exp_trials = generate_trials('experiment', const)
 fate = Fate()

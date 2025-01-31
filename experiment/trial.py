@@ -38,7 +38,7 @@ class Trial:
             const.dur_stimulus,
             const.dur_resp
         )
-        print( (self.correct, self.rt))
+        print((self.correct, self.rt))
         
         self.startles, self.startleReason = fate.shouldStartle(self)
 
