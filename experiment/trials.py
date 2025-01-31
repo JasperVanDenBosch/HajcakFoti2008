@@ -1,51 +1,46 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List
+from typing import List
 from experiment.trial import Trial
 from random import shuffle
-from itertools import combinations_with_replacement
-from copy import copy
+from typing import TYPE_CHECKING
+from math import ceil
+if TYPE_CHECKING:
+    from experiment.conditions import Phase
 
 
-def generate_trials() -> List[Trial]:
-    risky_decks = [0, 1] ## TODO
+def generate_trials(phase: Phase) -> List[Trial]:
+    n = 30 if phase == 'training' else 240
+    stimuli = (
+        dict(compatibility='compatible', direction='left'),
+        dict(compatibility='compatible', direction='right'),
+        dict(compatibility='incompatible', direction='left'),
+        dict(compatibility='incompatible', direction='right')
+    )
+    N_STIMS = len(stimuli)
+    SPAN = 4
+    REPS = ceil(n/(SPAN*N_STIMS))
+    condition_vector = []
+    for _ in range(REPS):
+        segment = list(range(N_STIMS))*SPAN
+        shuffle(segment)
+        condition_vector += segment
+    condition_vector = condition_vector[:n]
 
-    # small outcomes varied between 6 and 11¢ and 
-    safe_dist = [
-        -10, -9, -8, -8, -7, -7, -7, -7, -6, -6, 
-        7, 8, 9, 9, 10, 10, 10, 10, 11, 11]
-    # large outcomes varied between 32 and 40¢
-    risky_dist = [
-        -40, -38, -36, -36, -34, -34, -34, -34, -32, -32, 
-        32, 34, 36, 36, 38, 38, 38, 38, 40, 40
-    ]
-    decks = [0, 1, 2, 3]
-    card_combs_fwd = list(combinations_with_replacement(decks, 2)) ## because they say risky vs safe 50%
-    card_combs_rew = list(combinations_with_replacement(reversed(decks), 2)) ## because they say risky vs safe 50%
+    trials = []
+    preceding = None
+    for c in condition_vector:
+        trials.append(
+            Trial(
+                phase=phase,
+                compatible=stimuli[c]['compatibility'],
+                direction=stimuli[c]['direction'],
+                preceding=preceding,
+                correct=None,
+                rt=None,
+                startles=None,
+                startleReason=None
+            )
+        )
+        preceding = trials[-1]
 
-    #24x20 values
-    recipes = []
-    for _ in range(24):
-
-        risky_vals = copy(risky_dist)
-        safe_vals = copy(safe_dist)
-        shuffle(risky_vals)
-        shuffle(safe_vals)
-
-        card_combs = card_combs_fwd + card_combs_rew
-        shuffle(card_combs) ## shuffle order of combinations for matching with values
-        
-        subset_recipes = []
-        for (card1, card2) in card_combs:
-            subset_recipes.append(dict(
-                card_left=card1,
-                card_right=card2,
-                value_left = risky_vals.pop() if card1 in risky_decks else safe_vals.pop(),
-                value_right = risky_vals.pop() if card2 in risky_decks else safe_vals.pop(),
-            ))
-        shuffle(subset_recipes) ## now also shuffle value order
-        recipes += subset_recipes
-
-        assert len(risky_vals) == 0
-        assert len(safe_vals) == 0
-
-    return [Trial(**recipe) for recipe in recipes]
+    return trials
