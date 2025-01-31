@@ -7,7 +7,7 @@ long = 'Development at Home' # longer format to identify lab
 [monitor]
 width = 40.00 # width of the screen in centimeters (without the frame)
 distance = 40 # distance of the participants eyes to the screen in centimeters
-resolution = [1728, 1117] # width, height pixels of the monitor 
+resolution = [1000, 800] # width, height pixels of the monitor 
 refresh_rate = 120 # refresh rate (as reported by OS or from hardware specs)
 
 [triggers]

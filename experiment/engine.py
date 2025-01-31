@@ -20,11 +20,11 @@ from psychopy.visual.rect import Rect
 from psychopy.visual.shape import ShapeStim
 from psychopy.sound import Sound
 from psychopy.info import RunTimeInfo
-from psychopy.event import waitKeys, getKeys
+from psychopy.event import waitKeys, getKeys, Mouse
 from psychopy import plugins
 plugins.activatePlugins()
-prefs.hardware['audioLib'] = 'ptb'
-prefs.hardware['audioLatencyMode'] = '4'
+#prefs.hardware['audioLib'] = 'ptb'
+#prefs.hardware['audioLatencyMode'] = '4'
 import numpy
 from experiment.ports import TriggerInterface, FakeTriggerPort, createTriggerPort
 if TYPE_CHECKING:
@@ -82,7 +82,7 @@ class PsychopyEngine(object):
             size=mon_settings['resolution'],
             monitor=my_monitor,
             color='black',
-            fullscr=True,
+            fullscr=False,
             units='deg'
         )
         self.win.mouseVisible = False 
@@ -91,6 +91,7 @@ class PsychopyEngine(object):
             print('Looks like a retina display')
         if scaling != 1.0:
             print('Weird scaling. Is your configured monitor resolution correct?')
+        self.mouse = Mouse(visible=None, win=self.win)
 
     def measureHardwarePerformance(self) -> Dict[str, Any]:
         return RunTimeInfo(win=self.win)
@@ -105,40 +106,36 @@ class PsychopyEngine(object):
         )
 
         self.all_left = ImageStim(
-                win=self.win,
-                image='stimuli/All_Left.jpg',
-                size=(5, 5),
-                units='deg',
-                pos=(+5, 0),
-                lineWidth=0,
-                name='all_left',
+            win=self.win,
+            image='stimuli/All_Left.jpg',
+            size=(self.const.img_size, self.const.img_size),
+            units='deg',
+            pos=(0, 0),
+            name='all_left',
         )
         self.all_right = ImageStim(
-                win=self.win,
-                image='stimuli/All_Right.jpg',
-                size=(5, 5),
-                units='deg',
-                pos=(+5, 0),
-                lineWidth=0,
-                name='all_right',
+            win=self.win,
+            image='stimuli/All_Right.jpg',
+            size=(self.const.img_size, self.const.img_size),
+            units='deg',
+            pos=(0, 0),
+            name='all_right',
         )
         self.center_left = ImageStim(
-                win=self.win,
-                image='stimuli/Center_Left.jpg',
-                size=(5, 5),
-                units='deg',
-                pos=(+5, 0),
-                lineWidth=0,
-                name=f'center_left',
+            win=self.win,
+            image='stimuli/Center_Left.jpg',
+            size=(self.const.img_size, self.const.img_size),
+            units='deg',
+            pos=(0, 0),
+            name=f'center_left',
         )
         self.center_right = ImageStim(
-                win=self.win,
-                image='stimuli/Center_Right.jpg',
-                size=(5, 5),
-                units='deg',
-                pos=(+5, 0),
-                lineWidth=0,
-                name=f'center_right',
+            win=self.win,
+            image='stimuli/Center_Right.jpg',
+            size=(self.const.img_size, self.const.img_size),
+            units='deg',
+            pos=(0, 0),
+            name=f'center_right',
         )
 
         self.fixCross = ShapeStim(
@@ -212,36 +209,38 @@ class PsychopyEngine(object):
         img.draw()
         triggerNr = self.triggers.forFlanker(phase, compatibility, direction)
         self.win.logOnFlip(level=logging.DATA, msg=f'flip {triggerNr}')
-        # record = dict()
-        # self.win.timeOnFlip(record, 'flipTime')
-        # self.kb.clearEvents()
+
         def flipHandler():
             self.port.trigger(triggerNr)
+            self.mouse.clickReset(buttons=(0, 1, 2)) #buttons=(0, 1, 2)
 
         self.win.callOnFlip(flipHandler)
         self.win.flip()
-        # for _ in range(duration-1):
+        wait(stim_dur/1000)
+        self.win.flip()
 
-        #     if choose:
-        #         keys = self.kb.getKeys(self.const.valid_keys, waitRelease=False)
-        #         if keys:
-        #             key = keys[0]
-        #             sideChosen = ['left', 'right'][self.const.valid_keys.index(key.name)]
-        #             return (sideChosen, key.rt)
+        n_iter = int(resp_dur / 50)
+        for _ in range(n_iter):
+            buttons, times = self.mouse.getPressed(getTime=True)
+            if len(buttons):
+                if direction == 'left':
+                    correct = buttons[-1] == 0
+                else:
+                    correct = buttons[-1] != 0
+                #return correct, times[-1]
+        return None, 0.0
 
-        #     self.win.flip()
 
     def displayFixCross(self, duration: int):
-        #for _ in range(duration):
         self.fixCross.draw()
         self.win.flip()
         wait(duration/1000)
 
     def delayAndStartle(self, reason: StartleCondition, delay: int):
         wait(delay/1000)
+        triggerNr = self.triggers.forStartle(reason)
         self.startle.play()
-        #nextFlip = win.getFutureFlipTime(clock='ptb')
-        #startle.play(when=nextFlip)  # sync with screen refresh
+        self.port.trigger(triggerNr)
 
     def exitRequested(self) -> bool:
         if self._exitNow:
@@ -259,5 +258,3 @@ class PsychopyEngine(object):
     def stop(self) -> None:
         self.port.trigger(self.const.eego_stop_trigger)
         self.win.close()
-
-

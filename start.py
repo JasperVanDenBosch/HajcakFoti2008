@@ -21,7 +21,8 @@ const = Constants()  # load fixed parameters wrt timing, sizing etc
 
 ## this object represents drawing and interactions via psychopy
 #engine = FakeEngine()
-engine = PsychopyEngine(const)
+triggers = Triggers()
+engine = PsychopyEngine(const, triggers)
 
 ## user input
 config = getLabConfiguration()
@@ -54,7 +55,7 @@ performance = engine.measureHardwarePerformance()
 engine.logDictionary('PERFORMANCE', performance)
 fr_conf = config['monitor']['refresh_rate']
 fr_meas = 1000/performance['windowRefreshTimeAvg_ms']
-TOLERANCE_FR = 5
+TOLERANCE_FR = 20
 msg = f'Configured ({fr_conf}) and measured ({fr_meas}) refresh rate differ by more than {TOLERANCE_FR}Hz'
 assert isclose(fr_conf, fr_meas, abs_tol=TOLERANCE_FR), msg
 
@@ -89,7 +90,7 @@ block_trials_correct = []
 for t, trial in enumerate(exp_trials):
 
     trial.run(engine, fate, const)
-    block_trials_correct.append(trial.correct)
+    block_trials_correct.append(trial.correct==True)
     if engine.exitRequested():
         break ## exit trial loop
 

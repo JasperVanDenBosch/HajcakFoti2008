@@ -64,6 +64,21 @@ def test_startle_picker_correct_predict():
     assert set(reasons) == {'correct_predictable'}
     assert mean(startles) == approx(0.5, abs=0.01)
 
+def test_startle_picker_correct_no_prec():
+    from experiment.fate import Fate
+
+    fate = Fate()
+
+    trial = Mock()
+    trial.phase = 'experiment'
+    trial.correct = True
+    trial.preceding = None
+
+    startle, reason = fate.shouldStartle(trial)
+    
+    assert reason == 'correct_unpredictable'
+    assert startle == False
+
 def test_startle_picker_correct_unpredict():
     from experiment.fate import Fate
 
