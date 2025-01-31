@@ -75,15 +75,18 @@ triggers = Triggers()
 ## before experiment
 engine.showMessage(const.ready_msg)
 
-## choose participant color scheme (small vs large decks)
+## training block
+train_trials = generate_trials('training')
+for trial in train_trials:
+    trial.run(engine, timer, triggers)
+    if engine.exitRequested():
+        break ## exit trial loop
 
 
 ## draw outcomes (separate module, unit test, see proc e-prime)
-trials = generate_trials()
-
-
+exp_trials = generate_trials('experiment')
 block_trials_correct = []
-for t, trial in enumerate(trials):
+for t, trial in enumerate(exp_trials):
 
     trial.run(engine, timer, triggers)
     block_trials_correct.append(trial.correct)
@@ -103,7 +106,8 @@ for t, trial in enumerate(trials):
         block_trials_correct = [] ## reset list of trial outcomes
 
 ## Create table from trials and save to csv file
-df = DataFrame([asdict(t) for t in trials])
+all_trials = train_trials+exp_trials
+df = DataFrame([asdict(t) for t in all_trials])
 df.to_csv(trials_fpath, float_format='%.4f')
 
 if not engine.exitRequested():

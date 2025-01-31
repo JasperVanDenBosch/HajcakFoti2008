@@ -5,7 +5,8 @@ if TYPE_CHECKING:
     from experiment.engine import PsychopyEngine
     from experiment.timer import Timer
     from experiment.triggers import Triggers
-    from experiment.conditions import Phase, Direction, Compatibility
+    from experiment.fate import Fate
+    from experiment.conditions import Phase, Direction, Compatibility, StartleCondition
 
 
 @dataclass()
@@ -13,13 +14,16 @@ class Trial:
 
     phase: Phase
     direction: Direction
-    compatible: Compatibility 
+    compatible: Compatibility
+    preceding: Optional[Trial]
     
     ## determined after participant choice
     correct: Optional[bool]
     rt: Optional[float]
+    startles: Optional[bool]
+    startleReason: Optional[StartleCondition]
 
-    def run(self, engine: PsychopyEngine, timer: Timer, triggers: Triggers):
+    def run(self, engine: PsychopyEngine, timer: Timer, triggers: Triggers, fate: Fate):
         """Present this trial
 
         Args:
@@ -27,21 +31,13 @@ class Trial:
         """
         engine.displayFixCross(timer.inter_trial_interval)
 
-        ## flankers
-        (self.choice, self.rt) = engine.displayCardsAndAwaitChoice(
-            self.card_left,
-            self.card_right,
-            triggers.get_number('options')
+        (self.correct, self.rt) = engine.displayFlankersAndAwaitResponse(
+            self.phase, self.direction, self.compatible
         )
+        
+        self.startles, self.startleReason = fate.shouldStartle(self)
 
-        ## wait for response 
-        self.registerChoice()
-
-        ## startle wait period (does this happen on non-startle trials?)
-
-        ## startle (break on non-startle trials?)
-
-
+        if self.startles:
+            engine.delayAndStartle(self.startleReason)
 
         engine.flush()
-

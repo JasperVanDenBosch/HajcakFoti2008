@@ -1,21 +1,6 @@
 """Code blocks from builder
 """
 
-
-
-### code_trial (being exp)
-showBreakMessage = False
-blockLength = 8
-stimulusDuration = 0.2
-totalTrials_count = 0
-totalTrials = 240
-accuracyTotal = 0
-runningAccuracy = 0
-accuracy_lastTrial = 0
-blockof30N = 0
-startled_trials0 = []
-startled_trials1 = []
-startled_trials4 = []
 startle = sound.Sound(value='stimuli/startle2_reencoded.wav',
                                             volume=1.0,
                                             hamming=False,
@@ -25,65 +10,11 @@ startle = sound.Sound(value='stimuli/startle2_reencoded.wav',
 
 ## begin routine
 
-trialNofcurrentLoop = currentLoop.thisN + 1
-totalTrials_count += 1
-mouse_block.clickReset()
-iTi_time = random.randrange(500,1000,50) / 1000
-
-if totalTrials_count > 1 :
-    accuracy_lastTrial = accuracy
-
-if "practice" in currentLoop.name :
-    trialType = 'p'
-else :
-    trialType = 'e'
-
-if totalTrials_count % blockLength == 0 \
-    and trialType == 'e' :
-        blockof30N += 1
-        showBreakMessage = True
-elif totalTrials_count % blockLength == 0 \
-    and trialType == 'p' :
-        print("practice_trials finished...")
-        practice_trials.finished = True
-else :
-        showBreakMessage = False
-
-## end routine
-
-buttons,times = mouse_block.getPressed(getTime=True)
-if buttons[-1] == correct_resp :
-    accuracy = 1 
-else:
-    accuracy = 0
-accuracyTotal += accuracy
-runningAccuracy = (accuracyTotal / totalTrials_count) * 100
-
-#random.sample([1,0],1)[0]
-if accuracy_lastTrial == 0 and random.randrange(0,100,1) >= 50 and len(startled_trials1) < (totalTrials/100*50) :
-    startled = True
-    startled_trials1.append(totalTrials_count)
-elif accuracy_lastTrial == 0 and random.randrange(0,100,1) >= 50 and len(startled_trials0) < (totalTrials/100*50):
-    startled = True
-    startled_trials0.append(totalTrials_count)
-elif random.randrange(0,100,1) >= 50 and len(startled_trials4) < (totalTrials/100*4):
-    startled = True
-    startled_trials4.append(totalTrials_count)
-else :
-    startled = False
-
 if startled == True :
     startle.play()
     #nextFlip = win.getFutureFlipTime(clock='ptb')
     #startle.play(when=nextFlip)  # sync with screen refresh
 
-thisExp.addData('trialType',trialType)
-thisExp.addData('accuracy',accuracy)
-thisExp.addData('rt',mouse_block.time[-1])
-thisExp.addData('trialN',trialNofcurrentLoop)
-thisExp.addData('totalTrials',totalTrials_count)
-thisExp.addData('accuracyTotal',accuracyTotal)
-thisExp.addData('runningAccuracy',runningAccuracy)
 
 
 ############### code lsl
