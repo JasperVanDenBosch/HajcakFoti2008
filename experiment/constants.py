@@ -13,10 +13,11 @@ class Constants(object):
     block_trials = 30
     total_trials = 8*30
 
-    dur_stimulus = 0.2 ## highlight choice (500ms)
-    dur_resp = 1.8 ## display value (1000ms)
-    inter_trial_interval_min = 0.5 
-    inter_trial_interval_jitter = 0.5 
+    dur_stimulus = 200 ## 
+    dur_resp = 1800 ## additional response window
+    dur_delay_startle = 300 ## startle delay
+    inter_trial_interval_min = 500
+    inter_trial_interval_jitter = 500
 
     # size of stimuli in degrees of visual angle
     instruction_text_size = 1

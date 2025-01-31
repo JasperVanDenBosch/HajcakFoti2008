@@ -10,7 +10,7 @@ from statistics import mean
 import platform
 from pandas import DataFrame
 from experiment.constants import Constants
-from experiment.timer import Timer
+from experiment.fate import Fate
 from experiment.trials import generate_trials
 #from experiment.fake_engine import FakeEngine
 from experiment.engine import PsychopyEngine
@@ -67,28 +67,26 @@ engine.loadStimuli()
 # Welcome the participant
 #engine.showMessage(const.instruction_msg)
 
-timer = Timer()
-timer.optimizeFlips(fr_conf, const)
-
 triggers = Triggers()
 
 ## before experiment
 engine.showMessage(const.ready_msg)
 
 ## training block
-train_trials = generate_trials('training')
+train_trials = generate_trials('training', const)
+fate = Fate()
 for trial in train_trials:
-    trial.run(engine, timer, triggers)
+    trial.run(engine, fate, const)
     if engine.exitRequested():
         break ## exit trial loop
 
-
-## draw outcomes (separate module, unit test, see proc e-prime)
-exp_trials = generate_trials('experiment')
+## main experiment
+exp_trials = generate_trials('experiment', const)
+fate = Fate()
 block_trials_correct = []
 for t, trial in enumerate(exp_trials):
 
-    trial.run(engine, timer, triggers)
+    trial.run(engine, fate, const)
     block_trials_correct.append(trial.correct)
     if engine.exitRequested():
         break ## exit trial loop

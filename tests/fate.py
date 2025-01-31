@@ -2,10 +2,6 @@ from unittest.mock import Mock
 from pytest import approx
 from statistics import mean
 
-    # 'training'
-    # 'error'
-    # 'correct_predictable'
-    # 'correct_unpredictable'
 
 def test_startle_picker_training():
     from experiment.fate import Fate

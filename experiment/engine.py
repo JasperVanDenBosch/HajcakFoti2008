@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Tuple, Dict, List, Union, Any, Optional, Literal
 import json
 from psychopy.monitors import Monitor
-from psychopy.event import waitKeys, getKeys
 from psychopy.core import wait
 from psychopy import logging
 from psychopy.hardware.keyboard import Keyboard
@@ -19,12 +18,12 @@ from psychopy.visual.line import Line
 from psychopy.visual.rect import Rect
 from psychopy.visual.shape import ShapeStim
 from psychopy.info import RunTimeInfo
-#from psychopy.gui import Dlg
+from psychopy.event import waitKeys, getKeys
 import numpy
 from experiment.ports import TriggerInterface, FakeTriggerPort, createTriggerPort
 if TYPE_CHECKING:
     Stimulus = Union[TextStim, ShapeStim, Rect]
-    from experiment.conditions import CardPos
+    from experiment.conditions import Phase, Direction, Compatibility, StartleCondition
     from experiment.constants import Constants
 
 
@@ -67,7 +66,7 @@ class PsychopyEngine(object):
     def configureWindow(self, settings: Dict) -> None:
         mon_settings = settings['monitor']
         my_monitor = Monitor(
-            name='ICON_YS04',
+            name='EML',
             distance=mon_settings['distance'])
         my_monitor.setSizePix(mon_settings['resolution'])
         my_monitor.setWidth(mon_settings['width'])
@@ -97,23 +96,14 @@ class PsychopyEngine(object):
         value right
         fixation
         """
-        self.val_left = TextStim(self.win, height=1, units='deg', name='value_left')
-        self.val_left.autoLog = True
-        self.val_right = TextStim(self.win, height=1, units='deg', name='value_right')
-        self.val_right.autoLog = True
-
-
-        self.card_left = Rect(
-                win=self.win,
-                size=(self.params.card_size, self.params.card_size),
-                units='deg',
-                pos=(-5, 0),
-                lineColor='white',
-                fillColor='white',
-                lineWidth=0,
-                name=f'card_left',
-                colorSpace='rgb255'
+        startle = sound.Sound(
+            value='stimuli/startle2_reencoded.wav',
+            volume=1.0,
+            hamming=False,
+            name='startle',
+            autoLog=False
         )
+
         self.card_right = Rect(
                 win=self.win,
                 size=(self.params.card_size, self.params.card_size),
@@ -124,27 +114,6 @@ class PsychopyEngine(object):
                 lineWidth=0,
                 name=f'card_left',
                 colorSpace='rgb255'
-        )
-
-        self.value_left = TextStim(
-            self.win,
-            text='0.0',
-            font=self.params.value_font,
-            units='deg',
-            height=self.params.value_text_size,
-            pos=(-5, 0),
-            color=(1, 1, 1),
-            name=f'value_left'
-        )
-        self.value_right = TextStim(
-            self.win,
-            text='0.0',
-            font=self.params.value_font,
-            units='deg',
-            height=self.params.value_text_size,
-            pos=(+5, 0),
-            color=(1, 1, 1),
-            name=f'value_right'
         )
 
         self.fixCross = ShapeStim(
@@ -199,68 +168,66 @@ class PsychopyEngine(object):
             viewPixBulbSize=7.0
         )
 
-    def displayCardsAndAwaitChoice(self, card1:int, card2:int, triggerNr: int) -> Tuple[CardPos, float]:
-        response = self.displayCards(card1, card2, choose=True, duration=500_000, triggerNr=triggerNr)
-        assert response is not None
-        return response
-    
-    def displayCards(
-                self,
-                card1:int,
-                card2:int,
-                duration: int,
-                triggerNr: int,
-                highlight: Optional[CardPos]=None,
-                showValue: Optional[CardPos]=None,
-                value: float=0.0,
-                choose=False,
-            ) -> Optional[Tuple[CardPos, float]]:
-        self.fixCross.draw()
-        self.card_left.fillColor = self.params.colors[card1]
-        self.card_left.lineWidth = 10 if highlight == 'left' else 0
-        self.card_left.draw()
-        self.card_right.fillColor = self.params.colors[card2]
-        self.card_right.lineWidth = 10 if highlight == 'right' else 0
-        self.card_right.draw()
-        if showValue == 'left':
-            self.value_left.text = f'{value:+d}'
-            self.value_left.draw()
-        if showValue == 'right':
-            self.value_right.text = f'{value:+d}'
-            self.value_right.draw()
-        triggerNr = triggerNr
-        self.win.logOnFlip(level=logging.DATA, msg=f'flip {triggerNr}')
-        record = dict()
-        self.win.timeOnFlip(record, 'flipTime')
-        self.kb.clearEvents()
-        def flipHandler():
-            self.kb.clock.reset()
-            self.port.trigger(triggerNr)
+    def displayFlankersAndAwaitResponse(self,
+                phase: Phase,
+                direction: Direction,
+                compatibility: Compatibility,
+                stim_dur: int,
+                resp_dur: int,
+            ) -> Tuple[Optional[bool], Optional[float]]:
+        pass
+        # self.fixCross.draw()
+        # self.card_left.fillColor = self.params.colors[card1]
+        # self.card_left.lineWidth = 10 if highlight == 'left' else 0
+        # self.card_left.draw()
+        # self.card_right.fillColor = self.params.colors[card2]
+        # self.card_right.lineWidth = 10 if highlight == 'right' else 0
+        # self.card_right.draw()
+        # if showValue == 'left':
+        #     self.value_left.text = f'{value:+d}'
+        #     self.value_left.draw()
+        # if showValue == 'right':
+        #     self.value_right.text = f'{value:+d}'
+        #     self.value_right.draw()
+        # triggerNr = triggerNr
+        # self.win.logOnFlip(level=logging.DATA, msg=f'flip {triggerNr}')
+        # record = dict()
+        # self.win.timeOnFlip(record, 'flipTime')
+        # self.kb.clearEvents()
+        # def flipHandler():
+        #     self.kb.clock.reset()
+        #     self.port.trigger(triggerNr)
 
-        self.win.callOnFlip(flipHandler)
-        self.win.flip()
-        for _ in range(duration-1):
+        # self.win.callOnFlip(flipHandler)
+        # self.win.flip()
+        # for _ in range(duration-1):
 
-            if choose:
-                keys = self.kb.getKeys(self.params.valid_keys, waitRelease=False)
-                if keys:
-                    key = keys[0]
-                    sideChosen = ['left', 'right'][self.params.valid_keys.index(key.name)]
-                    return (sideChosen, key.rt)
+        #     if choose:
+        #         keys = self.kb.getKeys(self.params.valid_keys, waitRelease=False)
+        #         if keys:
+        #             key = keys[0]
+        #             sideChosen = ['left', 'right'][self.params.valid_keys.index(key.name)]
+        #             return (sideChosen, key.rt)
 
-            self.fixCross.draw()
-            self.card_left.draw()
-            self.card_right.draw()
-            if showValue == 'left':
-                self.value_left.draw()
-            if showValue == 'right':
-                self.value_right.draw()
-            self.win.flip()
+        #     self.fixCross.draw()
+        #     self.card_left.draw()
+        #     self.card_right.draw()
+        #     if showValue == 'left':
+        #         self.value_left.draw()
+        #     if showValue == 'right':
+        #         self.value_right.draw()
+        #     self.win.flip()
 
     def displayFixCross(self, duration: int):
         for _ in range(duration):
             self.fixCross.draw()
             self.win.flip()
+
+    def delayAndStartle(self, reason: StartleCondition, delay: int):
+        pass
+        startle.play()
+        #nextFlip = win.getFutureFlipTime(clock='ptb')
+        #startle.play(when=nextFlip)  # sync with screen refresh
 
     def exitRequested(self) -> bool:
         if self._exitNow:
