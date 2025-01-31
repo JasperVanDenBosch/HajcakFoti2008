@@ -1,32 +1,27 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
-    from experiment.conditions import CardPos, Phase, Magnitude, Outcome
-OFFSET = True
-
+    from experiment.conditions import Phase, Direction, Compatibility, StartleCondition
 
 class Triggers:
 
+    def forFlanker(self, phase: Phase, compatibility: Compatibility, direction: Direction) -> int:
+        offset = 11 if phase == 'training' else 15
+        return offset + 2*int(compatibility=='incompatible') + int(direction=='right')
 
-    """Original:
-        Left / SAFE &H40 --> 64
-        Left / Risky &H50 --> 80
-        right / safe -> &H48  --> 72
-        right / risky -> &H58  -> 88
-    """
-
-    def get_number(self, phase: Phase, magnitude: Optional[Magnitude]=None, outcome: Optional[Outcome]=None) -> int:
-        if phase == 'options':
-            return 1
+    def forResponse(self, phase: Phase, correct: Optional[True]) -> int:
+        offset = 20 if phase == 'training' else 26
+        if correct is None:
+            return offset + 2
+        elif correct is True:
+            return offset + 0
         else:
-            assert magnitude
-            assert outcome
-            mag_offset = dict(safe=0, risky=1)[magnitude]
-            out_offset = dict(loss=0, win=1)[outcome]
-            if phase == 'feedback_chosen':
-                return 10 + out_offset*2 + mag_offset
-            elif phase == 'feedback_alternative':
-                return 20 + out_offset*2 + mag_offset
-            else:
-                raise ValueError('[Triggers.get_number()] Unknown Phase value')
-        return 0
+            return offset + 1
+
+    def forStartle(self, condition: StartleCondition) -> int:
+        match condition:
+            case 'training': return 4
+            case 'correct_predictable': return 5
+            case 'correct_unpredictable': return 6
+            case 'error': return 7
+            case _: raise ValueError('unknown StartleCondition')

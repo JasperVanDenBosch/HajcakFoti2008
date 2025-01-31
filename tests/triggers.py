@@ -7,22 +7,38 @@ should left/right be in triggers? because of laterality?
 """
 import pytest
 
-@pytest.mark.skip()
-def test_triggers():
+def test_triggers_flankers():
     from experiment.triggers import Triggers
     triggers = Triggers()
 
-    ## first phase; magnitude unknown, outcome irrelevant
-    assert triggers.get_number(phase='options') == 1
+    assert triggers.forFlanker(phase='training', compatibility='compatible', direction='left') == 11
+    assert triggers.forFlanker(phase='training', compatibility='compatible', direction='right') == 12
+    assert triggers.forFlanker(phase='training', compatibility='incompatible', direction='left') == 13
+    assert triggers.forFlanker(phase='training', compatibility='incompatible', direction='right') == 14
+    
+    assert triggers.forFlanker(phase='experiment', compatibility='compatible', direction='left') == 15
+    assert triggers.forFlanker(phase='experiment', compatibility='compatible', direction='right') == 16
+    assert triggers.forFlanker(phase='experiment', compatibility='incompatible', direction='left') == 17
+    assert triggers.forFlanker(phase='experiment', compatibility='incompatible', direction='right') == 18
 
-    ## second phase
-    assert triggers.get_number(phase='feedback_chosen', outcome='loss', magnitude='safe') == 10
-    assert triggers.get_number(phase='feedback_chosen', outcome='loss', magnitude='risky') == 11
-    assert triggers.get_number(phase='feedback_chosen', outcome='win', magnitude='safe') == 12
-    assert triggers.get_number(phase='feedback_chosen', outcome='win', magnitude='risky') == 13
 
-    ## third phase
-    assert triggers.get_number(phase='feedback_alternative', outcome='loss', magnitude='safe') == 20
-    assert triggers.get_number(phase='feedback_alternative', outcome='loss', magnitude='risky') == 21
-    assert triggers.get_number(phase='feedback_alternative', outcome='win', magnitude='safe') == 22
-    assert triggers.get_number(phase='feedback_alternative', outcome='win', magnitude='risky') == 23
+def test_triggers_response():
+    from experiment.triggers import Triggers
+    triggers = Triggers()
+
+    assert triggers.forResponse(phase='training', correct=True) == 20
+    assert triggers.forResponse(phase='training', correct=False) == 21
+    assert triggers.forResponse(phase='training', correct=None) == 22
+
+    assert triggers.forResponse(phase='experiment', correct=True) == 26
+    assert triggers.forResponse(phase='experiment', correct=False) == 27
+    assert triggers.forResponse(phase='experiment', correct=None) == 28
+
+def test_triggers_startle():
+    from experiment.triggers import Triggers
+    triggers = Triggers()
+
+    assert triggers.forStartle(condition='training') == 4
+    assert triggers.forStartle(condition='correct_predictable') == 5
+    assert triggers.forStartle(condition='correct_unpredictable') == 6
+    assert triggers.forStartle(condition='error') == 7
