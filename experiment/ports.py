@@ -41,11 +41,11 @@ class EegoLSLPort:
 
     def __init__(self):
         from pylsl import StreamInfo, StreamOutlet
-        stream = StreamInfo('psychopy2eego','Markers',1,0,'string', 'EML')
+        stream = StreamInfo('PsychoPy2eego','Markers',1,0,'string','7357')
         self.inner = StreamOutlet(stream)
 
     def trigger(self, val: int) -> None:
-        self.inner.push_sample(str(val))
+        self.inner.push_sample([str(val)])
 
 
 class ViewPixxTriggerPort:
@@ -85,6 +85,6 @@ def createTriggerPort(typ: str, engine: PsychopyEngine, scale: float, address: s
     elif typ == 'parallel':
         return ParallelPort(address)
     elif typ == 'eegolsl':
-        return EegoLSLPort(address)
+        return EegoLSLPort()
     else:
         raise ValueError('Unknown port type in lab settings.')

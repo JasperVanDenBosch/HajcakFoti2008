@@ -31,7 +31,7 @@ pidx = 888 ## no easy way to get input on some windows setups so hardcoding for 
 sub = f'{SITE}{pidx:03}' # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
-data_dir = expanduser(f'~/data/ICON_lab/YeungSanfey2004/sub-{sub}')
+data_dir = expanduser(const.data_dir)
 makedirs(data_dir, exist_ok=True) # ensure data directory exists
 # current date+time to seconds, helps to generate unique files, prevent overwriting
 dt_str = datetime.now().strftime(f'%Y%m%d%H%M%S')
@@ -65,8 +65,6 @@ engine.connectTriggerInterface(config['triggers'])
 ## stimuli
 engine.loadStimuli()
 
-# Welcome the participant
-#engine.showMessage(const.instruction_msg)
 
 triggers = Triggers()
 
@@ -78,6 +76,7 @@ engine.showMessage(const.ready_msg)
 ## training block
 train_trials = generate_trials('training', const)
 fate = Fate()
+engine.displayFixCross(1000)
 for trial in train_trials:
     trial.run(engine, fate, const)
     if engine.exitRequested():
@@ -90,7 +89,8 @@ engine.showMessage(const.exp_msg)
 exp_trials = generate_trials('experiment', const)
 fate = Fate()
 block_trials_correct = []
-for t, trial in enumerate(exp_trials):
+engine.displayFixCross(1000)
+for t, trial in enumerate(exp_trials, start=1):
 
     trial.run(engine, fate, const)
     block_trials_correct.append(trial.correct==True)
@@ -106,8 +106,9 @@ for t, trial in enumerate(exp_trials):
             msg = const.high_acc_msg
         else :
             msg = const.mid_acc_msg
-        engine.showMessage(msg, confirm=True)
+        engine.showMessage(msg)
         block_trials_correct = [] ## reset list of trial outcomes
+        engine.displayFixCross(1000) ## fixation cross after block feedback
 
 ## Create table from trials and save to csv file
 all_trials = train_trials+exp_trials

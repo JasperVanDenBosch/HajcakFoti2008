@@ -29,8 +29,7 @@ class Trial:
         Args:
             engine (PsychopyEngine): This is a wrapper for the experiment software
         """
-        engine.displayFixCross(self.iti)
-
+        
         (self.correct, self.rt) = engine.displayFlankersAndAwaitResponse(
             self.phase,
             self.direction,
@@ -38,11 +37,14 @@ class Trial:
             const.dur_stimulus,
             const.dur_resp
         )
-        print((self.correct, self.rt))
         
         self.startles, self.startleReason = fate.shouldStartle(self)
 
         if self.startles:
             engine.delayAndStartle(self.startleReason, const.dur_delay_startle)
 
+        engine.displayFixCross(self.iti)
+
         engine.flush()
+
+
