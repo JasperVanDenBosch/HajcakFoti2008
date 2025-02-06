@@ -1,5 +1,0 @@
-stimulus,condition,direction,correct_resp,event_marker,event_hex
-stimuli/All_left.jpg,compatible,left,0,101::CL,3D
-stimuli/All_Right.jpg,compatible,right,1,102::CR,3E
-stimuli/Center_Left.jpg,incompatible,left,0,103::IL,3F
-stimuli/Center_Right.jpg,incompatible,right,1,104::IR,40
