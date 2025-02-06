@@ -65,8 +65,6 @@ engine.connectTriggerInterface(config['triggers'])
 ## stimuli
 engine.loadStimuli()
 
-# Welcome the participant
-#engine.showMessage(const.instruction_msg)
 
 triggers = Triggers()
 
@@ -78,6 +76,7 @@ engine.showMessage(const.ready_msg)
 ## training block
 train_trials = generate_trials('training', const)
 fate = Fate()
+engine.displayFixCross(1000)
 for trial in train_trials:
     trial.run(engine, fate, const)
     if engine.exitRequested():
@@ -90,6 +89,7 @@ engine.showMessage(const.exp_msg)
 exp_trials = generate_trials('experiment', const)
 fate = Fate()
 block_trials_correct = []
+engine.displayFixCross(1000)
 for t, trial in enumerate(exp_trials, start=1):
 
     trial.run(engine, fate, const)
@@ -106,8 +106,9 @@ for t, trial in enumerate(exp_trials, start=1):
             msg = const.high_acc_msg
         else :
             msg = const.mid_acc_msg
-        engine.showMessage(msg, confirm=True)
+        engine.showMessage(msg)
         block_trials_correct = [] ## reset list of trial outcomes
+        engine.displayFixCross(1000) ## fixation cross after block feedback
 
 ## Create table from trials and save to csv file
 all_trials = train_trials+exp_trials
