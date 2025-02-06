@@ -31,7 +31,7 @@ pidx = 888 ## no easy way to get input on some windows setups so hardcoding for 
 sub = f'{SITE}{pidx:03}' # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
-data_dir = expanduser(f'~/data/ICON_lab/YeungSanfey2004/sub-{sub}')
+data_dir = expanduser(const.data_dir)
 makedirs(data_dir, exist_ok=True) # ensure data directory exists
 # current date+time to seconds, helps to generate unique files, prevent overwriting
 dt_str = datetime.now().strftime(f'%Y%m%d%H%M%S')
@@ -90,7 +90,7 @@ engine.showMessage(const.exp_msg)
 exp_trials = generate_trials('experiment', const)
 fate = Fate()
 block_trials_correct = []
-for t, trial in enumerate(exp_trials):
+for t, trial in enumerate(exp_trials, start=1):
 
     trial.run(engine, fate, const)
     block_trials_correct.append(trial.correct==True)
