@@ -9,7 +9,7 @@ class Triggers:
         offset = 11 if phase == 'training' else 15
         return offset + 2*int(compatibility=='incompatible') + int(direction=='right')
 
-    def forResponse(self, phase: Phase, correct: Optional[True]) -> int:
+    def forResponse(self, phase: Phase, correct: Optional[bool]) -> int:
         offset = 20 if phase == 'training' else 26
         if correct is None:
             return offset + 2
