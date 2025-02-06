@@ -163,7 +163,7 @@ class PsychopyEngine(object):
         """
         return Line(**kwargs)
 
-    def showMessage(self, message: str, confirm=True):
+    def showMessage(self, message: str, confirm=True, min_dur=2):
         msg = TextStim(
             self.win,
             text=message,
@@ -176,9 +176,9 @@ class PsychopyEngine(object):
         msg.draw()
         self.win.flip()
         if confirm:
+            wait(min_dur)
             self.mouse.clickReset()
             while True:
-                wait(0.5)
                 buttons, _ = self.mouse.getPressed(getTime=True)
                 if sum(buttons):
                     return
@@ -224,7 +224,7 @@ class PsychopyEngine(object):
         wait(stim_dur/1000)
         self.win.flip()
 
-        n_iter = int(resp_dur / 10)
+        n_iter = int(resp_dur / 5)
         for _ in range(n_iter):
             buttons, times = self.mouse.getPressed(getTime=True)
             if sum(buttons):
@@ -235,7 +235,7 @@ class PsychopyEngine(object):
                     rt = times[-1]
                     correct = buttons == [0, 0, 1]
                 break
-            wait(10/1000)
+            wait(5/1000)
             ## todo check at end instead
         else:
             rt = 0.0
@@ -258,10 +258,10 @@ class PsychopyEngine(object):
     def exitRequested(self) -> bool:
         if self._exitNow:
             return True
-        new_keys = getKeys(keyList=['q', 'esc'])
-        if 'q' in new_keys and 'esc' in new_keys:
+        new_keys = getKeys(keyList=['escape', 'esc']) #
+        if len(new_keys):
             self._exitNow = True
-            logging.warn('EXIT REQUESTED (Q and ESC pressed)')
+            logging.warn('EXIT REQUESTED (ESC pressed)')
             return True
         return False
     
