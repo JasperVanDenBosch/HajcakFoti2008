@@ -1,0 +1,16 @@
+## Site / lab specific configuration.
+
+[site]
+abbreviation = 'ASTON' # 4-letter abbreviation, no digits, to be used in the BIDS subject identifiers
+long = 'Development at Home' # longer format to identify lab
+
+[monitor]
+width = 40.00 # width of the screen in centimeters (without the frame)
+distance = 40 # distance of the participants eyes to the screen in centimeters
+resolution = [1000, 800] # width, height pixels of the monitor 
+refresh_rate = 64 # refresh rate (as reported by OS or from hardware specs)
+
+[triggers]
+type = 'dummy' # serial, parallel, labjack or viewpixx
+address = '' # hardware address of the trigger port (not all types require this)
+baudrate = 0 # speed of the trigger port (only applies to serial port)
