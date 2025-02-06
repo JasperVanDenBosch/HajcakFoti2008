@@ -7,6 +7,8 @@ class Constants(object):
     """These are the durations in ms as reported in the manuscript.
     """
 
+    data_dir = '~/data/YeungSanfey2004/'
+
     block_trials = 30
     total_trials = 8*30
 
@@ -24,7 +26,7 @@ class Constants(object):
     eego_start_trigger = 123  # start eego recording
     eego_stop_trigger= 127  # stop eego recording
 
-    ready_msg = """"
+    ready_msg = """
 Welcome! In this experiment, you will see 5 arrows appear in the middle of the screen.
 Some arrows will point left and others right. Your task is to identify the direction
 of the MIDDLE arrow. Press the left mouse button if it points left, and the right mouse 
