@@ -105,6 +105,14 @@ class PsychopyEngine(object):
             autoLog=False
         )
 
+        self.vol_test_sound = Sound(
+            value='stimuli/startle_volume_test.wav',
+            volume=1.0,
+            hamming=False,
+            name='startle',
+            autoLog=False
+        )
+
         self.all_left = ImageStim(
             win=self.win,
             image='stimuli/All_Left.jpg',
@@ -254,6 +262,21 @@ class PsychopyEngine(object):
         triggerNr = self.triggers.forStartle(reason)
         self.startle.play()
         self.port.trigger(triggerNr)
+        wait(self.startle.getDuration())
+
+    def playSoundCheck(self, msg: str):
+        msg = TextStim(
+            self.win,
+            text=msg,
+            height=self.const.instruction_text_size,
+            units='deg',
+            wrapWidth=100,
+            name='message'
+        )
+        msg.draw()
+        self.win.flip()
+        self.vol_test_sound.play()
+        wait(self.vol_test_sound.getDuration())
 
     def exitRequested(self) -> bool:
         if self._exitNow:
