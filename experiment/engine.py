@@ -23,8 +23,7 @@ from psychopy.info import RunTimeInfo
 from psychopy.event import waitKeys, getKeys, Mouse
 from psychopy import plugins
 plugins.activatePlugins()
-#prefs.hardware['audioLib'] = 'ptb'
-#prefs.hardware['audioLatencyMode'] = '3'
+
 import numpy
 from experiment.ports import TriggerInterface, FakeTriggerPort, createTriggerPort
 if TYPE_CHECKING:
@@ -74,7 +73,8 @@ class PsychopyEngine(object):
         mon_settings = settings['monitor']
         my_monitor = Monitor(
             name='EML',
-            distance=mon_settings['distance'])
+            distance=mon_settings['distance']
+        )
         my_monitor.setSizePix(mon_settings['resolution'])
         my_monitor.setWidth(mon_settings['width'])
         my_monitor.saveMon()
@@ -83,7 +83,8 @@ class PsychopyEngine(object):
             monitor=my_monitor,
             color='black',
             fullscr=True,
-            units='deg'
+            units='deg',
+            screen=int(mon_settings['screen']),
         )
         self.win.mouseVisible = False 
         scaling = mon_settings['resolution'][0] / self.win.size[0]

@@ -18,6 +18,7 @@ class Trial:
     iti: int
     
     ## determined after participant choice
+    preceding_correct: Optional[bool]
     correct: Optional[bool]
     rt: Optional[float]
     startles: Optional[bool]
@@ -29,7 +30,10 @@ class Trial:
         Args:
             engine (PsychopyEngine): This is a wrapper for the experiment software
         """
-        
+        ## check and store the previous trial's outcome
+        self.preceding_correct = True if (self.preceding is None) else self.preceding.correct
+        self.preceding = None ## don't need reference anymore
+
         (self.correct, self.rt) = engine.displayFlankersAndAwaitResponse(
             self.phase,
             self.direction,
