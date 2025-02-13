@@ -8,6 +8,7 @@ from os import makedirs
 from math import isclose
 from statistics import mean
 import platform
+from random import randint
 from pandas import DataFrame
 from experiment.constants import Constants
 from experiment.fate import Fate
@@ -27,11 +28,11 @@ engine = PsychopyEngine(const, triggers)
 ## user input
 config = getLabConfiguration()
 SITE = config['site']['abbreviation']
-pidx = 888 ## no easy way to get input on some windows setups so hardcoding for now
-sub = f'{SITE}{pidx:03}' # the subject ID is a combination of lab ID + subject index
+pidx = randint(99, 99999) ## no easy way to get input on some windows setups so hardcoding for now
+sub = f'{SITE}{pidx:05}' # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
-data_dir = expanduser(const.data_dir)
+data_dir = expanduser(config['site']['directory'])
 makedirs(data_dir, exist_ok=True) # ensure data directory exists
 # current date+time to seconds, helps to generate unique files, prevent overwriting
 dt_str = datetime.now().strftime(f'%Y%m%d%H%M%S')
