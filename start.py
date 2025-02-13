@@ -98,17 +98,22 @@ for t, trial in enumerate(exp_trials, start=1):
     if engine.exitRequested():
         break ## exit trial loop
 
+    ## end of block
     if t % const.block_trials == 0:
-        # end of block
-        accuracy = mean(block_trials_correct)
-        if accuracy <= 0.75 :
-            msg = const.low_acc_msg
-        elif accuracy > 0.90 :
-            msg = const.high_acc_msg
-        else :
-            msg = const.mid_acc_msg
-        engine.showMessage(msg)
-        block_trials_correct = [] ## reset list of trial outcomes
+
+        ## not the end of the task; display feedback:
+        if t < len(exp_trials):
+            accuracy = mean(block_trials_correct)
+            if accuracy <= 0.75 :
+                msg = const.low_acc_msg
+            elif accuracy > 0.90 :
+                msg = const.high_acc_msg
+            else :
+                msg = const.mid_acc_msg
+            engine.showMessage(msg)
+            block_trials_correct = [] ## reset list of trial outcomes
+
+        ## do this after every block including the last one:
         engine.displayFixCross(1000) ## fixation cross after block feedback
 
 ## Create table from trials and save to csv file
