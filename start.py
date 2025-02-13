@@ -118,7 +118,7 @@ for t, trial in enumerate(exp_trials, start=1):
 
 ## Create table from trials and save to csv file
 all_trials = train_trials+exp_trials
-df = DataFrame([asdict(t) for t in all_trials])
+df = DataFrame([asdict(t, exclude='preceding') for t in all_trials])
 df.to_csv(trials_fpath, float_format='%.4f')
 
 if not engine.exitRequested():

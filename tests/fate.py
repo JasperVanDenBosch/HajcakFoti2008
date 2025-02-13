@@ -45,14 +45,10 @@ def test_startle_picker_correct_predict():
 
     fate = Fate()
 
-    preceding_trial = Mock()
-    preceding_trial.phase = 'experiment'
-    preceding_trial.correct = False
-
     trial = Mock()
     trial.phase = 'experiment'
     trial.correct = True
-    trial.preceding = preceding_trial
+    trial.preceding_correct = False
 
     startles = []
     reasons = []
@@ -72,7 +68,7 @@ def test_startle_picker_correct_no_prec():
     trial = Mock()
     trial.phase = 'experiment'
     trial.correct = True
-    trial.preceding = None
+    trial.preceding_correct = True
 
     startle, reason = fate.shouldStartle(trial)
     
@@ -84,14 +80,10 @@ def test_startle_picker_correct_unpredict():
 
     fate = Fate()
 
-    preceding_trial = Mock()
-    preceding_trial.phase = 'experiment'
-    preceding_trial.correct = True
-
     trial = Mock()
     trial.phase = 'experiment'
     trial.correct = True
-    trial.preceding = preceding_trial
+    trial.preceding_correct = True
 
     startles = []
     reasons = []

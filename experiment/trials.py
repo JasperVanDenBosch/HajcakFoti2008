@@ -39,6 +39,7 @@ def generate_trials(phase: Phase, const: Constants) -> List[Trial]:
                 direction=stimuli[c]['direction'],
                 preceding=preceding,
                 iti=iti,
+                preceding_correct=None,
                 correct=None,
                 rt=None,
                 startles=None,
