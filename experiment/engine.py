@@ -73,8 +73,7 @@ class PsychopyEngine(object):
         mon_settings = settings['monitor']
         my_monitor = Monitor(
             name='EML',
-            distance=mon_settings['distance'],
-            screen=int(mon_settings['screen']),
+            distance=mon_settings['distance']
         )
         my_monitor.setSizePix(mon_settings['resolution'])
         my_monitor.setWidth(mon_settings['width'])
@@ -84,7 +83,8 @@ class PsychopyEngine(object):
             monitor=my_monitor,
             color='black',
             fullscr=True,
-            units='deg'
+            units='deg',
+            screen=int(mon_settings['screen']),
         )
         self.win.mouseVisible = False 
         scaling = mon_settings['resolution'][0] / self.win.size[0]
