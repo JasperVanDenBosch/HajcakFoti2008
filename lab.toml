@@ -3,12 +3,14 @@
 [site]
 abbreviation = 'MMUB' # 4-letter abbreviation, no digits, to be used in the BIDS subject identifiers
 long = 'Bland Lab Manchester Metropolitan' # longer format to identify lab
+directory = '~/data/eegmanylabs/HajcakFoti2008'
 
 [monitor]
 width = 60.00 # width of the screen in centimeters (without the frame)
 distance = 60 # distance of the participants eyes to the screen in centimeters
 resolution = [1920, 1200] # width, height pixels of the monitor 
 refresh_rate = 60 # refresh rate (as reported by OS or from hardware specs)
+screen = 0 # For dual monitor setups; choose which monitor to use
 
 [triggers]
 type = 'eegolsl' # serial, parallel, labjack or viewpixx
