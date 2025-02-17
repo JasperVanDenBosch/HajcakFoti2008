@@ -28,7 +28,7 @@ engine = PsychopyEngine(const, triggers)
 ## user input
 config = getLabConfiguration()
 SITE = config['site']['abbreviation']
-pidx = randint(99, 99999) ## no easy way to get input on some windows setups so hardcoding for now
+pidx = engine.askForParticipantId()
 sub = f'{SITE}{pidx:05}' # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
