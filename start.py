@@ -29,7 +29,7 @@ engine = PsychopyEngine(const, triggers)
 config = getLabConfiguration()
 SITE = config['site']['abbreviation']
 pidx = engine.askForParticipantId()
-sub = f'{SITE}{pidx:05}' # the subject ID is a combination of lab ID + subject index
+sub = SITE + pidx # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
 data_dir = expanduser(config['site']['directory'])

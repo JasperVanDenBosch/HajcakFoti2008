@@ -94,28 +94,22 @@ class PsychopyEngine(object):
             print('Weird scaling. Is your configured monitor resolution correct?')
         self.mouse = Mouse(visible=None, win=self.win)
 
-    def askForParticipantId(self) -> int:
-        DEFAULT = 9999
+    def askForParticipantId(self) -> str:
+        DEFAULT = '9999'
         LABEL = 'Participant ID'
         try:
             from psychopy.gui import Dlg
             dlg = Dlg(title=LABEL)
             dlg.addField(LABEL, DEFAULT)
             string_id = dlg.show()
-            if dlg.OK:
-                try:
-                    return int(string_id)
-                except:
-                    return DEFAULT
+            if not dlg.OK:
+                raise ValueError('No participant ID given')
         except:
             from tkinter.simpledialog import askstring
             string_id = askstring(LABEL, LABEL, initialvalue=str(DEFAULT))
-            if string_id:
-                try:
-                    return int(string_id)
-                except:
-                    return DEFAULT
-        return DEFAULT
+            if string_id is None:
+                raise ValueError('No participant ID given')
+        return string_id
 
     def measureHardwarePerformance(self) -> Dict[str, Any]:
         return RunTimeInfo(win=self.win)
