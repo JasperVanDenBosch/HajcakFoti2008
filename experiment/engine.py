@@ -120,9 +120,10 @@ class PsychopyEngine(object):
     def measureHardwarePerformance(self) -> Dict[str, Any]:
         return RunTimeInfo(win=self.win)
 
-    def loadStimuli(self):
+    def loadStimuli(self, bitrate=44100):
+        assert bitrate in (44100, 48000), 'invalid bitrate parameter'
         self.startle = Sound(
-            value='stimuli/startle.wav',
+            value=f'stimuli/alternativeStartle_{bitrate}_50ms.wav',
             volume=1.0,
             hamming=False,
             name='startle',
@@ -130,7 +131,7 @@ class PsychopyEngine(object):
         )
 
         self.vol_test_sound = Sound(
-            value='stimuli/startle_volume_test.wav',
+            value=f'stimuli/alternativeStartle_60s_{bitrate}.wav',
             volume=1.0,
             hamming=False,
             name='startle',

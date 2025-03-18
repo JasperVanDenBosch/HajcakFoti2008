@@ -24,7 +24,11 @@ engine.configureWindow(config)
 ## record some basic info
 
 ## stimuli
-engine.loadStimuli()
+if 'sound' in config:
+    bitrate = config['sound']['bitrate']
+else:
+    bitrate = 44100
+engine.loadStimuli(bitrate)
 
 
 ## before experiment

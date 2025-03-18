@@ -64,7 +64,11 @@ assert isclose(fr_conf, fr_meas, abs_tol=TOLERANCE_FR), msg
 engine.connectTriggerInterface(config['triggers'])
 
 ## stimuli
-engine.loadStimuli()
+if 'sound' in config:
+    bitrate = config['sound']['bitrate']
+else:
+    bitrate = 44100
+engine.loadStimuli(bitrate)
 
 
 triggers = Triggers()
