@@ -255,10 +255,8 @@ class PsychopyEngine(object):
             buttons, times = self.mouse.getPressed(getTime=True)
             if sum(buttons):
                 if direction == 'left':
-                    #rt = times[0]
                     correct = buttons == [1, 0, 0]
                 else:
-                    #rt = times[-1]
                     correct = buttons == [0, 0, 1]
                 break
             wait(5/1000)
@@ -266,7 +264,7 @@ class PsychopyEngine(object):
         else:
             #rt = 0.0
             correct = None
-        rt = min(times)
+        rt = max(times)
         triggerNr = self.triggers.forResponse(phase, correct)
         self.port.trigger(triggerNr)
         return correct, rt
