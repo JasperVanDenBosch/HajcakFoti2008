@@ -91,8 +91,8 @@ class PsychopyEngine(object):
         if scaling == 0.5: 
             print('Looks like a retina display')
         if scaling != 1.0:
-            print('Weird scaling. Is your configured monitor resolution correct?')
-        self.mouse = Mouse(visible=None, win=self.win)
+            print('Weird scaling. Is your co nfigured monitor resolution correct?')
+        self.mouse = Mouse(visible=False, win=self.win)
 
     def askForParticipantId(self) -> str:
         DEFAULT = '9999'
@@ -202,15 +202,13 @@ class PsychopyEngine(object):
         msg.autoLog = True
         msg.draw()
         self.win.flip()
+        wait(min_dur)
         if confirm:
-            wait(min_dur)
             self.mouse.clickReset()
             while True:
                 buttons, _ = self.mouse.getPressed(getTime=True)
                 if sum(buttons):
                     return
-        else:
-            wait(1.5)
 
     def connectTriggerInterface(self, settings: Dict) -> None:
         self.port = createTriggerPort(
