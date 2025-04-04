@@ -101,7 +101,8 @@ class PsychopyEngine(object):
             from psychopy.gui import Dlg
             dlg = Dlg(title=LABEL)
             dlg.addField(LABEL, DEFAULT)
-            string_id = dlg.show()
+            data = dlg.show()
+            string_id = data[LABEL]
             if not dlg.OK:
                 raise ValueError('No participant ID given')
         except:

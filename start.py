@@ -99,7 +99,7 @@ block_trials_correct = []
 engine.displayFixCross(1000)
 for t, trial in enumerate(exp_trials, start=1):
 
-    trial.run(engine, fate, const)
+    trial.run(engine, fate, const, startle_delay)
     block_trials_correct.append(trial.correct==True)
     if engine.exitRequested():
         break ## exit trial loop
