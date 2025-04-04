@@ -29,7 +29,7 @@ engine = PsychopyEngine(const, triggers)
 config = getLabConfiguration()
 SITE = config['site']['abbreviation']
 pidx = engine.askForParticipantId()
-sub = f'{SITE}{pidx:05}' # the subject ID is a combination of lab ID + subject index
+sub = SITE + pidx # the subject ID is a combination of lab ID + subject index
 
 ## data directory and file paths
 data_dir = expanduser(config['site']['directory'])
@@ -64,7 +64,13 @@ assert isclose(fr_conf, fr_meas, abs_tol=TOLERANCE_FR), msg
 engine.connectTriggerInterface(config['triggers'])
 
 ## stimuli
-engine.loadStimuli()
+if 'sound' in config:
+    bitrate = config['sound']['bitrate']
+    startle_delay = config['sound'].get('startle_delay', const.dur_delay_startle)
+else:
+    bitrate = 44100
+    startle_delay = const.dur_delay_startle
+engine.loadStimuli(bitrate)
 
 
 triggers = Triggers()
@@ -79,7 +85,7 @@ train_trials = generate_trials('training', const)
 fate = Fate()
 engine.displayFixCross(1000)
 for trial in train_trials:
-    trial.run(engine, fate, const)
+    trial.run(engine, fate, const, startle_delay)
     if engine.exitRequested():
         break ## exit trial loop
 
@@ -93,7 +99,7 @@ block_trials_correct = []
 engine.displayFixCross(1000)
 for t, trial in enumerate(exp_trials, start=1):
 
-    trial.run(engine, fate, const)
+    trial.run(engine, fate, const, startle_delay)
     block_trials_correct.append(trial.correct==True)
     if engine.exitRequested():
         break ## exit trial loop

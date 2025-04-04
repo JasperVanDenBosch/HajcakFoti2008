@@ -91,38 +91,34 @@ class PsychopyEngine(object):
         if scaling == 0.5: 
             print('Looks like a retina display')
         if scaling != 1.0:
-            print('Weird scaling. Is your configured monitor resolution correct?')
-        self.mouse = Mouse(visible=None, win=self.win)
+            print('Weird scaling. Is your co nfigured monitor resolution correct?')
+        self.mouse = Mouse(visible=False, win=self.win)
 
-    def askForParticipantId(self) -> int:
-        DEFAULT = 9999
+    def askForParticipantId(self) -> str:
+        DEFAULT = '9999'
         LABEL = 'Participant ID'
         try:
             from psychopy.gui import Dlg
             dlg = Dlg(title=LABEL)
             dlg.addField(LABEL, DEFAULT)
-            string_id = dlg.show()
-            if dlg.OK:
-                try:
-                    return int(string_id)
-                except:
-                    return DEFAULT
+            data = dlg.show()
+            string_id = data[LABEL]
+            if not dlg.OK:
+                raise ValueError('No participant ID given')
         except:
             from tkinter.simpledialog import askstring
             string_id = askstring(LABEL, LABEL, initialvalue=str(DEFAULT))
-            if string_id:
-                try:
-                    return int(string_id)
-                except:
-                    return DEFAULT
-        return DEFAULT
+            if string_id is None:
+                raise ValueError('No participant ID given')
+        return string_id
 
     def measureHardwarePerformance(self) -> Dict[str, Any]:
         return RunTimeInfo(win=self.win)
 
-    def loadStimuli(self):
+    def loadStimuli(self, bitrate=44100):
+        assert bitrate in (44100, 48000), 'invalid bitrate parameter'
         self.startle = Sound(
-            value='stimuli/startle.wav',
+            value=f'stimuli/alternativeStartle_{bitrate}_50ms.wav',
             volume=1.0,
             hamming=False,
             name='startle',
@@ -130,7 +126,7 @@ class PsychopyEngine(object):
         )
 
         self.vol_test_sound = Sound(
-            value='stimuli/startle_volume_test.wav',
+            value=f'stimuli/alternativeStartle_60s_{bitrate}.wav',
             volume=1.0,
             hamming=False,
             name='startle',
@@ -207,15 +203,13 @@ class PsychopyEngine(object):
         msg.autoLog = True
         msg.draw()
         self.win.flip()
+        wait(min_dur)
         if confirm:
-            wait(min_dur)
             self.mouse.clickReset()
             while True:
                 buttons, _ = self.mouse.getPressed(getTime=True)
                 if sum(buttons):
                     return
-        else:
-            wait(1.5)
 
     def connectTriggerInterface(self, settings: Dict) -> None:
         self.port = createTriggerPort(
@@ -261,17 +255,16 @@ class PsychopyEngine(object):
             buttons, times = self.mouse.getPressed(getTime=True)
             if sum(buttons):
                 if direction == 'left':
-                    rt = times[0]
                     correct = buttons == [1, 0, 0]
                 else:
-                    rt = times[-1]
                     correct = buttons == [0, 0, 1]
                 break
             wait(5/1000)
             ## todo check at end instead
         else:
-            rt = 0.0
+            #rt = 0.0
             correct = None
+        rt = max(times)
         triggerNr = self.triggers.forResponse(phase, correct)
         self.port.trigger(triggerNr)
         return correct, rt

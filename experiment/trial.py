@@ -24,7 +24,7 @@ class Trial:
     startles: Optional[bool]
     startleReason: Optional[StartleCondition]
 
-    def run(self, engine: PsychopyEngine, fate: Fate, const: Constants):
+    def run(self, engine: PsychopyEngine, fate: Fate, const: Constants, startle_delay: int):
         """Present this trial
 
         Args:
@@ -45,7 +45,7 @@ class Trial:
         self.startles, self.startleReason = fate.shouldStartle(self)
 
         if self.startles:
-            engine.delayAndStartle(self.startleReason, const.dur_delay_startle)
+            engine.delayAndStartle(self.startleReason, startle_delay)
 
         engine.displayFixCross(self.iti)
 

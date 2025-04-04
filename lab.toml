@@ -16,3 +16,7 @@ screen = 0 # For dual monitor setups; choose which monitor to use
 type = 'eegolsl' # serial, parallel, labjack or viewpixx
 address = '' # hardware address of the trigger port (not all types require this)
 baudrate = 0 # speed of the trigger port (only applies to serial port)
+
+[sound]
+bitrate = 44100 # 44100 (default) or 48000
+startle_delay = 300
