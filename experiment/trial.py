@@ -46,7 +46,6 @@ class Trial:
 
         if self.startles:
             engine.delayAndStartle(self.startleReason, startle_delay)
-        print(startle_delay)
 
         engine.displayFixCross(self.iti)
 
