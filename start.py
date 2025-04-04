@@ -66,8 +66,10 @@ engine.connectTriggerInterface(config['triggers'])
 ## stimuli
 if 'sound' in config:
     bitrate = config['sound']['bitrate']
+    startle_delay = config['sound'].get('startle_delay', const.dur_delay_startle)
 else:
     bitrate = 44100
+    startle_delay = const.dur_delay_startle
 engine.loadStimuli(bitrate)
 
 
@@ -83,7 +85,7 @@ train_trials = generate_trials('training', const)
 fate = Fate()
 engine.displayFixCross(1000)
 for trial in train_trials:
-    trial.run(engine, fate, const)
+    trial.run(engine, fate, const, startle_delay)
     if engine.exitRequested():
         break ## exit trial loop
 

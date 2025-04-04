@@ -19,3 +19,4 @@ baudrate = 0 # speed of the trigger port (only applies to serial port)
 
 [sound]
 bitrate = 44100 # 44100 (default) or 48000
+startle_delay = 300
