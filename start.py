@@ -40,6 +40,11 @@ dt_str = datetime.now().strftime(f'%Y%m%d%H%M%S')
 trials_fpath = join(data_dir, f'sub-{sub}_run-{dt_str}_trials.csv')
 log_fpath = join(data_dir, f'sub-{sub}_run-{dt_str}_log.txt')
 
+## missing values
+missing_val_marker = None
+if config['site'].get('missing'):
+    missing_val_marker = config['site']['missing']
+
 ## set log levels and log file location
 engine.configureLog(log_fpath)
 
@@ -125,7 +130,7 @@ for t, trial in enumerate(exp_trials, start=1):
 ## Create table from trials and save to csv file
 all_trials = train_trials+exp_trials
 df = DataFrame([asdict(t) for t in all_trials])
-df.to_csv(trials_fpath, float_format='%.4f')
+df.to_csv(trials_fpath, float_format='%.4f', na_rep=missing_val_marker)
 
 if not engine.exitRequested():
     engine.showMessage(const.thank_msg, confirm=False)

@@ -258,13 +258,14 @@ class PsychopyEngine(object):
                     correct = buttons == [1, 0, 0]
                 else:
                     correct = buttons == [0, 0, 1]
+                rt = max(times)
                 break
             wait(5/1000)
             ## todo check at end instead
         else:
-            #rt = 0.0
             correct = None
-        rt = max(times)
+            rt = None
+        
         triggerNr = self.triggers.forResponse(phase, correct)
         self.port.trigger(triggerNr)
         return correct, rt
