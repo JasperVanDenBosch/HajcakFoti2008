@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Union
 from serial import Serial
 from psychopy.parallel import ParallelPort as PsychopyParallelPort
+from psychopy.core import wait
 from experiment.fake_engine import FakeTriggerPort
 if TYPE_CHECKING:
     from experiment.engine import PsychopyEngine
@@ -25,6 +26,8 @@ class ParallelPort:
 
     def trigger(self, val: int) -> None:
         self.pport.setData(val)
+        wait(0.005)
+        self.pport.setData(0)
 
 
 class LabJackPort:
