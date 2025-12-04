@@ -6,6 +6,7 @@ from serial import Serial
 from psychopy.parallel import ParallelPort as PsychopyParallelPort
 from psychopy.core import wait
 from experiment.fake_engine import FakeTriggerPort
+from experiment.niport import NidaqPort
 if TYPE_CHECKING:
     from experiment.engine import PsychopyEngine
 
@@ -74,7 +75,7 @@ class ViewPixxTriggerPort:
 
 
 TriggerInterface = Union[SerialTriggerPort, FakeTriggerPort,
-    ViewPixxTriggerPort, LabJackPort, ParallelPort, EegoLSLPort]
+    ViewPixxTriggerPort, LabJackPort, ParallelPort, EegoLSLPort, NidaqPort]
 
 def createTriggerPort(typ: str, engine: PsychopyEngine, scale: float, address: str='', rate: int=0, viewPixBulbSize: float=7.0) -> TriggerInterface:
     if typ == 'dummy':
@@ -89,5 +90,7 @@ def createTriggerPort(typ: str, engine: PsychopyEngine, scale: float, address: s
         return ParallelPort(address)
     elif typ == 'eegolsl':
         return EegoLSLPort()
+    elif typ == 'nidaq':
+        return NidaqPort(address)
     else:
         raise ValueError('Unknown port type in lab settings.')
