@@ -4,6 +4,7 @@
 abbreviation = 'UOLM' # 4-letter abbreviation, no digits, to be used in the BIDS subject identifiers
 long = 'University of Leeds ICON / Mushtaq lab' # longer format to identify lab
 directory = '~/data/eegmanylabs/HajcakFoti2008'
+lang = 'en'
 
 [monitor]
 width = 55.00 # width of the screen in centimeters (without the frame)
