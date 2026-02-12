@@ -4,6 +4,7 @@
 abbreviation = 'MMUB' # 4-letter abbreviation, no digits, to be used in the BIDS subject identifiers
 long = 'Bland Lab Manchester Metropolitan' # longer format to identify lab
 directory = '~/data/eegmanylabs/HajcakFoti2008'
+lang = 'en'
 
 [monitor]
 width = 60.00 # width of the screen in centimeters (without the frame)
