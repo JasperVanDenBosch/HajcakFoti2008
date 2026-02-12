@@ -51,6 +51,8 @@ engine.configureLog(log_fpath)
 ## setup psychopy monitor and window objects
 engine.configureWindow(config)
 
+LANG = config['site'].get('lang', 'en')
+
 ## record some basic info
 engine.logDictionary('SESSION', dict(
     participant_index=pidx,
@@ -83,7 +85,7 @@ triggers = Triggers()
 engine.signalStartRecording() ## for eego setup
 
 ## before experiment
-engine.showMessage(const.ready_msg)
+engine.showMessage(const.ready_msg[LANG])
 
 ## training block
 train_trials = generate_trials('training', const)
@@ -95,7 +97,7 @@ for trial in train_trials:
         break ## exit trial loop
 
 #raise ValueError
-engine.showMessage(const.exp_msg)
+engine.showMessage(const.exp_msg[LANG])
 
 ## main experiment
 exp_trials = generate_trials('experiment', const)
@@ -121,7 +123,7 @@ for t, trial in enumerate(exp_trials, start=1):
                 msg = const.high_acc_msg
             else :
                 msg = const.mid_acc_msg
-            engine.showMessage(msg)
+            engine.showMessage(msg[LANG])
             block_trials_correct = [] ## reset list of trial outcomes
 
         ## do this after every block including the last one:
@@ -133,5 +135,5 @@ df = DataFrame([asdict(t) for t in all_trials])
 df.to_csv(trials_fpath, float_format='%.4f', na_rep=missing_val_marker)
 
 if not engine.exitRequested():
-    engine.showMessage(const.thank_msg, confirm=False)
+    engine.showMessage(const.thank_msg[LANG], confirm=False)
 engine.stop()

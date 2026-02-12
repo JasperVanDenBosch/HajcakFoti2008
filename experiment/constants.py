@@ -26,15 +26,36 @@ class Constants(object):
     eego_start_trigger = 123  # start eego recording
     eego_stop_trigger= 127  # stop eego recording
 
-    ready_msg = """
+    ready_msg = dict(
+        en="""
 Welcome! In this experiment, you will see 5 arrows appear in the middle of the screen.
 Some arrows will point left and others right. Your task is to identify the direction
 of the MIDDLE arrow. Press the left mouse button if it points left, and the right mouse 
 button if it points right. Do this as fast as possible. 
 
-First, a practice block will follow."""
-    exp_msg = 'Training done.\n\nClick when ready to start main experiment...'
-    thank_msg = 'Done! Thank you.'
-    low_acc_msg = "Please try to be more accurate"
-    high_acc_msg = "Please try to respond faster"
-    mid_acc_msg = "You’re doing a great job"
+First, a practice block will follow.""",
+        fr="""Bienvenue au test de Flanker,
+Vous allez voir une série de 5 flèches apparaitre au milieu de l’écran. Certaines sont dirigées vers la gauche et d’autres vers la droite.
+
+Votre objectif est d’identifier le sens de la flèche du MILIEU.
+
+Si la fleche centrale pointe vers la gauche, appuyez sur le bouton de gauche.
+Si la fleche centrale pointe vers la droite, appuyez sur le bouton de droite.
+Répondez le plus vite possible.
+
+Pour commencer, vous allez réaliser un test d’entraînement.""")
+    exp_msg = dict(
+        en='Training done.\n\nClick when ready to start main experiment...',
+        fr='Entrainement terminé.\n\nCliquer quand vous êtes prêt à commencer le test principal')
+    thank_msg = dict(
+        en='Done! Thank you.',
+        fr='Test terminé ! Merci.')
+    low_acc_msg = dict(
+        en="Please try to be more accurate",
+        fr='Essayez d’être plus précis')
+    high_acc_msg = dict(
+        en="Please try to respond faster",
+        fr='Essayez de répondre plus rapidement')
+    mid_acc_msg = dict(
+        en="You’re doing a great job",
+        fr='Vous faites du bon travail')
