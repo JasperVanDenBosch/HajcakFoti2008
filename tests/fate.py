@@ -40,6 +40,29 @@ def test_startle_picker_error():
     assert set(reasons) == {'error'}
     assert mean(startles) == approx(0.5, abs=0.01)
 
+
+def test_startle_picker_noresponse():
+    """If there is no response, we do not startle.
+    """
+    from experiment.fate import Fate
+
+    fate = Fate()
+
+    trial = Mock()
+    trial.phase = 'experiment'
+    trial.correct = None
+
+    startles = []
+    reasons = []
+    for _ in range(5*30):
+        startle, reason = fate.shouldStartle(trial)
+        startles.append(startle)
+        reasons.append(reason)
+    
+    assert set(reasons) == {'no_response'}
+    assert mean(startles) == approx(0.0, abs=0.0001)
+
+
 def test_startle_picker_correct_predict():
     from experiment.fate import Fate
 
@@ -59,6 +82,7 @@ def test_startle_picker_correct_predict():
     
     assert set(reasons) == {'correct_predictable'}
     assert mean(startles) == approx(0.5, abs=0.01)
+
 
 def test_startle_picker_correct_no_prec():
     from experiment.fate import Fate
@@ -84,6 +108,30 @@ def test_startle_picker_correct_unpredict():
     trial.phase = 'experiment'
     trial.correct = True
     trial.preceding_correct = True
+
+    startles = []
+    reasons = []
+    for _ in range(5*30):
+        startle, reason = fate.shouldStartle(trial)
+        startles.append(startle)
+        reasons.append(reason)
+    
+    assert set(reasons) == {'correct_unpredictable'}
+    assert mean(startles) == approx(0.04, abs=0.001)
+
+
+def test_startle_picker_correct_preceding_no_response():
+    """If the preceding trial was a non-response,
+    count it as unpredictable
+    """
+    from experiment.fate import Fate
+
+    fate = Fate()
+
+    trial = Mock()
+    trial.phase = 'experiment'
+    trial.correct = True
+    trial.preceding_correct = None ## no response
 
     startles = []
     reasons = []

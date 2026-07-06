@@ -1,8 +1,14 @@
 """Define some types related to the design
 """
 from __future__ import annotations
-from typing import Union, Literal
-Compatibility = Union[Literal['compatible'], Literal['incompatible']]
-Direction = Union[Literal['left'], Literal['right']]
-Phase = Union[Literal['training'], Literal['experiment']]
-StartleCondition = Union[Literal['training'], Literal['error'], Literal['correct_predictable'], Literal['correct_unpredictable']]
+from typing import Literal
+Compatibility = Literal['compatible', 'incompatible']
+Direction = Literal['left', 'right']
+Phase = Literal['training', 'experiment']
+StartleCondition = Literal[
+    'training',
+    'error',
+    'correct_predictable',
+    'correct_unpredictable',
+    'no_response',
+]
