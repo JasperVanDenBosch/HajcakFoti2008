@@ -40,6 +40,29 @@ def test_startle_picker_error():
     assert set(reasons) == {'error'}
     assert mean(startles) == approx(0.5, abs=0.01)
 
+
+def test_startle_picker_noresponse():
+    """If there is no response, we do not startle.
+    """
+    from experiment.fate import Fate
+
+    fate = Fate()
+
+    trial = Mock()
+    trial.phase = 'experiment'
+    trial.correct = None
+
+    startles = []
+    reasons = []
+    for _ in range(5*30):
+        startle, reason = fate.shouldStartle(trial)
+        startles.append(startle)
+        reasons.append(reason)
+    
+    assert set(reasons) == {'no_response'}
+    assert mean(startles) == approx(0.0, abs=0.0001)
+
+
 def test_startle_picker_correct_predict():
     from experiment.fate import Fate
 

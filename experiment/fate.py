@@ -16,6 +16,7 @@ class Fate:
         self.future = {
             'training': self.decide(0.1, 10, n),
             'error': self.decide(0.5, 4, n),
+            'no_response': self.decide(0.0, 10, n),
             'correct_predictable': self.decide(0.5, 4, n),
             'correct_unpredictable': self.decide(0.04, 25, n),
         }
@@ -34,7 +35,9 @@ class Fate:
     def shouldStartle(self, trial: Trial) -> Tuple[bool, StartleCondition]:
         if trial.phase == 'training':
             reason = 'training'
-        elif not trial.correct:
+        elif trial.correct is None:
+            reason = 'no_response'
+        elif trial.correct is False:
             reason = 'error'
         elif not trial.preceding_correct:
             reason = 'correct_predictable'
