@@ -39,7 +39,7 @@ class Fate:
             reason = 'no_response'
         elif trial.correct is False:
             reason = 'error'
-        elif not trial.preceding_correct:
+        elif trial.preceding_correct is False:
             reason = 'correct_predictable'
         else:
             reason = 'correct_unpredictable'
