@@ -33,10 +33,10 @@ class Fate:
         return decisions
 
     def shouldStartle(self, trial: Trial) -> Tuple[bool, StartleCondition]:
-        if trial.phase == 'training':
-            reason = 'training'
-        elif trial.correct is None:
+        if trial.correct is None:
             reason = 'no_response'
+        elif trial.phase == 'training':
+            reason = 'training'
         elif trial.correct is False:
             reason = 'error'
         elif trial.preceding_correct is False:
